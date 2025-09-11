@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { prisma } from "../prismaClient";
 import { createRecipeInput } from "../validation/recipes.validation";
+import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
 
 // レシピ作成
-router.post("/", async (req, res, next) => {
+router.post("/", authMiddleware, async (req, res, next) => {
   try {
     const result = createRecipeInput.safeParse(req.body);
     if (!result.success) {

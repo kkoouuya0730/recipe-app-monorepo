@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 import axios from "axios";
-import { InvalidInputError } from "../errors/AppError";
+import { InvalidInputError, NotFoundError } from "../errors/AppError";
 
 export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.constructor.name);
@@ -25,6 +25,15 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
   }
 
   if (err instanceof InvalidInputError) {
+    return res.status(err.statusCode).json({
+      error: {
+        code: err.statusCode,
+        message: err.message,
+      },
+    });
+  }
+
+  if (err instanceof NotFoundError) {
     return res.status(err.statusCode).json({
       error: {
         code: err.statusCode,

@@ -12,3 +12,9 @@ export class InvalidInputError extends AppError {
     super(401, message, details);
   }
 }
+
+export class NotFoundError extends AppError {
+  constructor(message: string, details?: unknown) {
+    super(404, message, details);
+  }
+}
