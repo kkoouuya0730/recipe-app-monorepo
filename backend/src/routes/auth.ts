@@ -3,44 +3,54 @@ import { prisma } from "../prismaClient";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { loginUserInput, registerUserInput } from "../validation/auth.validation";
+import { InvalidInputError } from "../errors/AppError";
 
 const router = Router();
 
 // サインアップ
-router.post("/signup", async (req, res) => {
+router.post("/signup", async (req, res, next) => {
   try {
     const result = registerUserInput.safeParse(req.body);
     if (!result.success) {
-      throw Error;
+      throw result.error;
     }
+
     const { name, email, password } = result.data;
+
     const hashed = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ data: { email, password: hashed, name } });
+
     res.json({ id: user.id, email: user.email, name: user.name });
   } catch (err) {
-    res.status(400).json({ error: err instanceof Error ? err.message : "Invalid input" });
+    next(err);
   }
 });
 
 // ログイン
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const result = loginUserInput.safeParse(req.body);
     if (!result.success) {
-      throw Error;
+      throw result.error;
     }
+
     const { email, password } = result.data;
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+    if (!user) {
+      throw new InvalidInputError("Invalid credentials");
+    }
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(401).json({ error: "Invalid credentials" });
+    if (!valid) {
+      throw new InvalidInputError("Invalid credentials");
+    }
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || "secret", { expiresIn: "1h" });
+
     res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
   } catch (err) {
-    res.status(400).json({ error: err instanceof Error ? err.message : "Invalid input" });
+    next(err);
   }
 });
 
