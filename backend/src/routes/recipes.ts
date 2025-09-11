@@ -1,19 +1,18 @@
 import { Router } from "express";
 import { prisma } from "../prismaClient";
-import { z } from "zod";
+import { createRecipeInput } from "../validation/recipes.validation";
 
 const router = Router();
 
 // レシピ作成
 router.post("/", async (req, res) => {
-  const schema = z.object({
-    title: z.string().min(1),
-    description: z.string().min(1),
-    userId: z.number(),
-  });
-
   try {
-    const { title, description, userId } = schema.parse(req.body);
+    const result = createRecipeInput.safeParse(req.body);
+    if (!result.success) {
+      throw Error;
+    }
+    
+    const { title, description, userId } = result.data;
     const recipe = await prisma.recipe.create({ data: { title, description, userId } });
     res.json(recipe);
   } catch (err) {
