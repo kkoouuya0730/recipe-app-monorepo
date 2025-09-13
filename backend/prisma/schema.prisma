@@ -21,6 +21,7 @@ model User {
   password  String
   name      String
   avatarUrl String?
+  biography String?
   recipes   Recipe[]
   comments  Comment[]
   createdAt DateTime  @default(now())
