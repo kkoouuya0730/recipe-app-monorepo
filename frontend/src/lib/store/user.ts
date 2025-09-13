@@ -4,6 +4,7 @@ import { api } from "../api";
 export type User = {
   id: number;
   name: string;
+  email: string;
   biography?: string;
   avatarUrl?: string;
   createdAt: string;
@@ -27,12 +28,7 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
   fetchUser: async () => {
     set({ isLoading: true, error: null });
     try {
-      const user = get().user;
-      if (!user) {
-        set({ error: "取得に失敗しました", isLoading: false });
-        return;
-      }
-      const response = await api.get(`/user/${user.id}`);
+      const response = await api.get("/user/me");
       set({ user: response.data, isLoading: false });
     } catch (error) {
       set({ error: "取得に失敗しました", isLoading: false });

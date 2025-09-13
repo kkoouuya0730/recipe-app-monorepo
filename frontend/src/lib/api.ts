@@ -24,7 +24,6 @@ export const loadAuthToken = () => {
   const userStr = localStorage.getItem("user");
   if (token) {
     setAuthToken(token);
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   }
   if (userStr) {
     const user = JSON.parse(userStr) as User;
