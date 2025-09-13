@@ -1,17 +1,25 @@
 "use client";
 
 import clsx from "clsx";
-import { api, setAuthToken } from "../../lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useUserStore } from "@/lib/store/user";
+import { useAuthStore } from "@/lib/store/auth";
+import { useRedirectIfAuth } from "@/lib/hooks/useRedirectIfAuth";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const { login } = useAuthStore();
+  const { setUser } = useUserStore();
+
   const router = useRouter();
+
+  // ログイン済みならリダイレクト
+  useRedirectIfAuth();
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,16 +28,14 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const res = await api.post("/auth/login", { email, password });
+      const loginUser = await login({ email, password });
+      setUser(loginUser);
 
-      setAuthToken(res.data.token);
       setLoading(false);
-      router.push("/");
+      router.push("/profile");
     } catch (err: any) {
       console.error(err);
       setError("ログインに失敗しました");
-      setLoading(false);
-    } finally {
       setLoading(false);
     }
   };
