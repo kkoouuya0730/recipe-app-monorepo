@@ -12,6 +12,7 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
     .catch(() => {});
 
   if (err instanceof ZodError) {
+    console.error(err);
     return res.status(400).json({
       error: {
         code: 400,
@@ -25,6 +26,7 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
   }
 
   if (err instanceof InvalidInputError) {
+    console.error(err);
     return res.status(err.statusCode).json({
       error: {
         code: err.statusCode,
@@ -34,6 +36,7 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
   }
 
   if (err instanceof NotFoundError) {
+    console.error(err);
     return res.status(err.statusCode).json({
       error: {
         code: err.statusCode,
