@@ -43,7 +43,7 @@ router.get("/", async (_req, res, next) => {
 // ユーザーのレシピ一覧
 router.get("/my-recipes", authMiddleware, async (req: AuthRequest, res, next) => {
   try {
-    const recipe = await prisma.recipe.findMany({ where: { userId: req.userId! } });
+    const recipe = await prisma.recipe.findMany({ where: { userId: req.userId! }, include: { comments: true } });
 
     res.json(recipe);
   } catch (err) {
