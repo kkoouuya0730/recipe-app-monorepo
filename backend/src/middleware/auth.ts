@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { InvalidInputError } from "../errors/AppError";
 import z from "zod";
+import { prisma } from "../prismaClient";
 
 export interface AuthRequest extends Request {
   userId?: number;
@@ -15,36 +16,47 @@ const payloadSchema = z.object({
   userId: z.union([z.string(), z.number()]),
 });
 
-export const authMiddleware = (req: AuthRequest, _res: Response, next: NextFunction) => {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) {
-    return next(new InvalidInputError("Authorization header missing"));
-  }
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
+const REFRESH_SECRET = process.env.REFRESH_SECRET || "refresh_secret";
 
-  const token = authHeader.split(" ")[1];
-  if (!token) {
-    return next(new InvalidInputError("Token missing"));
-  }
+export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const accessToken = req.cookies?.accessToken;
+  const refreshToken = req.cookies?.refreshToken;
 
   try {
-    const secret = process.env.JWT_SECRET || "secret";
-    const decoded: unknown = jwt.verify(token, secret);
+    if (accessToken) {
+      // accessToken があれば検証
+      const decoded = jwt.verify(accessToken, JWT_SECRET);
+      const parseResult = payloadSchema.safeParse(decoded);
+      if (!parseResult.success) throw new Error("Invalid access token");
+      const idCheck = idSchema.safeParse({ userId: parseResult.data.userId });
+      if (!idCheck.success) throw new Error("Invalid access token payload");
 
-    if (typeof decoded === "string") {
-      return next(new InvalidInputError("Invalid token payload"));
+      req.userId = idCheck.data.userId;
+      return next();
     }
 
-    const parseResult = payloadSchema.safeParse(decoded);
-    if (parseResult.error) {
-      return next(new InvalidInputError("Unauthorized"));
+    if (!refreshToken) throw new InvalidInputError("No refresh token");
+
+    // DB に存在して有効か確認
+    const stored = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
+    if (!stored || stored.expiresAt < new Date()) {
+      return res.status(403).json({ error: "Invalid or expired refresh token" });
     }
 
-    const idCheck = idSchema.safeParse({ userId: parseResult.data.userId });
-    if (idCheck.error) {
-      return next(new InvalidInputError("Unauthorized"));
-    }
+    const payload = jwt.verify(refreshToken, REFRESH_SECRET) as { userId: number };
+    const idCheck = idSchema.safeParse({ userId: payload.userId });
+    if (!idCheck.success) throw new Error("Invalid refresh token payload");
 
-    req.userId = idCheck.data.userId;
+    // 新しい accessToken 発行
+    const newAccessToken = jwt.sign({ userId: payload.userId }, JWT_SECRET, { expiresIn: "15m" });
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    req.userId = payload.userId;
     next();
   } catch (error) {
     next(error);

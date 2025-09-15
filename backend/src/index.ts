@@ -5,10 +5,17 @@ import recipeRoutes from "./routes/recipes";
 import userRoutes from "./routes/user";
 import { errorHandler } from "./middleware/errorHandler";
 import { authMiddleware } from "./middleware/auth";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+app.use(cookieParser());
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {

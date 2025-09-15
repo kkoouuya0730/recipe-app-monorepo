@@ -1,7 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import { api, setAuthToken } from "../../lib/api";
+import { api } from "../../lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 export default function SignUpPage() {
@@ -28,9 +28,8 @@ export default function SignUpPage() {
         return;
       }
 
-      const res = await api.post("/auth/signup", { name, email, password });
+      await api.post("/auth/signup", { name, email, password });
 
-      setAuthToken(res.data.token);
       setLoading(false);
       router.push("/");
     } catch (err: any) {

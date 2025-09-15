@@ -1,36 +1,25 @@
 import { create } from "zustand";
-import { api, setAuthToken } from "../api";
+import { api } from "../api";
 import { User } from "./user";
 
 type AuthState = {
-  token: string | null;
   login: (input: { email: string; password: string }) => Promise<User>;
   logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-  token: null,
+export const useAuthStore = create<AuthState>(() => ({
   login: async (input) => {
-    const res = await api.post<{ user: User } & { token: string }>("/auth/login", {
+    const res = await api.post("/auth/login", {
       email: input.email,
       password: input.password,
     });
 
-    const { token, user } = res.data;
+    const { user } = res;
 
-    setAuthToken(token);
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-
-    set({ token });
     return user;
   },
 
-  logout: () =>
-    set(() => {
-      setAuthToken(null);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      return { user: null, token: null };
-    }),
+  logout: async () => {
+    await api.post("/auth/logout", {});
+  },
 }));

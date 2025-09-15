@@ -1,19 +1,10 @@
 "use client";
 
-import { loadAuthToken } from "@/lib/api";
 import { useUserStore } from "@/lib/store/user";
 import "@/styles/globals.css";
 import { useEffect } from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { setUser } = useUserStore();
-
-  useEffect(() => {
-    const loginUser = loadAuthToken();
-    if (loginUser) {
-      setUser(loginUser);
-    }
-  }, []);
 
   return (
     <html lang="ja">

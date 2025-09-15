@@ -19,16 +19,17 @@ export default function ProfilePage() {
   const user = useRequireAuth();
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loadingRecipes, setLoadingRecipes] = useState(true);
+  const [loadingRecipes, setLoadingRecipes] = useState(false);
   const [recipeError, setRecipeError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
 
     const fetchMyRecipes = async () => {
+      setLoadingRecipes(true);
       try {
         const res = await api.get("/recipes/my-recipes");
-        setRecipes(res.data);
+        setRecipes(res);
       } catch (error) {
         setRecipeError("レシピの取得に失敗しました");
       } finally {

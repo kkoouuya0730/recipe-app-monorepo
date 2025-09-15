@@ -29,12 +29,12 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const response = await api.get("/user/me");
-      set({ user: response.data, isLoading: false });
+      set({ user: response, isLoading: false });
     } catch (error) {
       set({ error: "取得に失敗しました", isLoading: false });
     }
   },
-  setUser: (user: User) => {
+  setUser: (user: User | null) => {
     set({ user });
   },
 }));

@@ -1,33 +1,14 @@
-import axios from "axios";
-import { User } from "./store/user";
+import { fetchClient } from "./fetchClient";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
-
-// fetch apiに変更
-export const api = axios.create({
-  baseURL: BASE_URL,
-  headers: { "Content-Type": "application/json" },
-});
-
-export const setAuthToken = (token: string | null) => {
-  if (token) {
-    localStorage.setItem("token", token);
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  } else {
-    localStorage.removeItem("token");
-    delete api.defaults.headers.common["Authorization"];
-  }
-};
-
-export const loadAuthToken = () => {
-  const token = localStorage.getItem("token");
-  const userStr = localStorage.getItem("user");
-  if (token) {
-    setAuthToken(token);
-  }
-  if (userStr) {
-    const user = JSON.parse(userStr) as User;
-    return user;
-  }
-  return null;
+export const api = {
+  get: async (path: string) => {
+    const res = await fetchClient(path, { method: "GET" });
+    if (!res.ok) throw new Error("API request failed");
+    return res.json();
+  },
+  post: async (path: string, body: any) => {
+    const res = await fetchClient(path, { method: "POST", body: JSON.stringify(body) });
+    if (!res.ok) throw new Error("API request failed");
+    return res.json();
+  },
 };
