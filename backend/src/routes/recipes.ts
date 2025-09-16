@@ -3,7 +3,7 @@ import { prisma } from "../prismaClient";
 import { createRecipeInput } from "../validation/recipes.validation";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import z from "zod";
-import { NotFoundError } from "../errors/AppError";
+import { InvalidInputError, NotFoundError } from "../errors/AppError";
 
 const router = Router();
 
@@ -12,16 +12,30 @@ const idSchema = z.object({
 });
 
 // レシピ作成
-router.post("/", authMiddleware, async (req, res, next) => {
+router.post("/", authMiddleware, async (req: AuthRequest, res, next) => {
   try {
     const recipeContentResult = createRecipeInput.safeParse(req.body);
     if (!recipeContentResult.success) {
-      throw recipeContentResult.error;
+      throw new InvalidInputError("Invalid input");
     }
 
-    const { title, description, userId } = recipeContentResult.data;
+    const { title, description, tags = [] } = recipeContentResult.data;
+    const uniqueTags = [...new Set(tags)];
 
-    const recipe = await prisma.recipe.create({ data: { title, description, userId } });
+    const recipe = await prisma.recipe.create({
+      data: {
+        title,
+        description,
+        userId: req.userId!,
+        tags: {
+          connectOrCreate: uniqueTags.map((tag) => ({
+            where: { name: tag },
+            create: { name: tag },
+          })),
+        },
+      },
+      include: { tags: true },
+    });
 
     res.json(recipe);
   } catch (err) {
@@ -32,7 +46,10 @@ router.post("/", authMiddleware, async (req, res, next) => {
 // レシピ一覧
 router.get("/", async (_req, res, next) => {
   try {
-    const recipe = await prisma.recipe.findMany({ include: { user: true } });
+    const recipe = await prisma.recipe.findMany({
+      include: { tags: true, user: { select: { id: true, name: true } } },
+      orderBy: { createdAt: "desc" },
+    });
 
     res.json(recipe);
   } catch (err) {
