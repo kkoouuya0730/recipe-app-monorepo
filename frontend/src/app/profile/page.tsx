@@ -5,13 +5,7 @@ import { useRequireAuth } from "@/lib/hooks/useRequireAuth";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import Link from "next/link";
-
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  comments?: { id: number }[];
-};
+import type { Recipe } from "shared/validation/modelSchema/RecipeSchema";
 
 export default function ProfilePage() {
   const { isLoading, error } = useUserStore();

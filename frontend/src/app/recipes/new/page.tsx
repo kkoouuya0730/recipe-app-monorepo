@@ -4,13 +4,6 @@ import { useState } from "react";
 
 import { useRouter } from "next/navigation";
 
-// type Recipe = {
-//   id: number;
-//   title: string;
-//   description: string;
-//   comments?: { id: number }[];
-// };
-
 export default function NewRecipePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");

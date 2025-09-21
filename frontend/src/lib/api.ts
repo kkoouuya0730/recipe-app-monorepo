@@ -6,7 +6,7 @@ export const api = {
     if (!res.ok) throw new Error("API request failed");
     return res.json();
   },
-  post: async (path: string, body: any) => {
+  post: async (path: string, body: unknown) => {
     const res = await fetchClient(path, { method: "POST", body: JSON.stringify(body) });
     if (!res.ok) throw new Error("API request failed");
     return res.json();

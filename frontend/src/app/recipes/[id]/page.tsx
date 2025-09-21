@@ -4,7 +4,8 @@ import { ReactNode, use, useEffect, useState } from "react";
 
 import { api } from "@/lib/api";
 import Image from "next/image";
-import { User } from "@/lib/store/user";
+import type { Recipe } from "shared/validation/modelSchema/RecipeSchema";
+import type { User } from "shared/validation/modelSchema/UserSchema";
 
 type SectionContainerProps = {
   children: ReactNode;
@@ -12,14 +13,6 @@ type SectionContainerProps = {
 
 const SectionContainer = ({ children }: SectionContainerProps) => {
   return <div className="rounded-md bg-white pb-4">{children}</div>;
-};
-
-type Recipe = {
-  id: number;
-  title: string;
-  description: string;
-  comments?: { id: number; content: string }[];
-  imageUrl?: string;
 };
 
 export default function RecipeDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -60,7 +53,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
     <div className="py-5 grid gap-4">
       <SectionContainer>
         <Image
-          src={recipe?.imageUrl ?? ""}
+          src="/fluffy-omurice-japanese-omelet-rice.jpg"
           alt="ふわふわオムライス"
           width={800}
           height={384}
@@ -69,7 +62,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
 
         <div className="flex items-center gap-3 px-3 mb-3">
           <Image
-            src={user?.avatarUrl ?? ""}
+            src={user?.avatarUrl ?? "/IMG_0522.png"}
             alt={`${user?.name}のプロフィール画像`}
             width={800}
             height={384}

@@ -42,7 +42,11 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
 
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".", // 追加（プロジェクトルートを基準に）
+    "paths": {
+      "shared/*": ["../shared/*"]
+    }
   },
   "include": ["src"]
 }

@@ -4,11 +4,12 @@ import { createRecipeInput } from "../validation/recipes.validation";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import z from "zod";
 import { InvalidInputError, NotFoundError } from "../errors/AppError";
+import { RecipeSchema } from "shared/validation/modelSchema/RecipeSchema";
 
 const router = Router();
 
-const idSchema = z.object({
-  id: z.coerce.number().int().min(1),
+const idSchema = RecipeSchema.pick({
+  id: true,
 });
 
 // レシピ作成
@@ -29,8 +30,8 @@ router.post("/", authMiddleware, async (req: AuthRequest, res, next) => {
         userId: req.userId!,
         tags: {
           connectOrCreate: uniqueTags.map((tag) => ({
-            where: { name: tag },
-            create: { name: tag },
+            where: { name: tag.name },
+            create: { name: tag.name },
           })),
         },
       },

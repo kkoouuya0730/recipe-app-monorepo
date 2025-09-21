@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { api } from "../api";
-import { User } from "./user";
+import type { User } from "shared/validation/modelSchema/UserSchema";
 
 type AuthState = {
   login: (input: { email: string; password: string }) => Promise<User>;

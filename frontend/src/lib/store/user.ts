@@ -1,14 +1,6 @@
 import { create } from "zustand";
 import { api } from "../api";
-
-export type User = {
-  id: number;
-  name: string;
-  email: string;
-  biography?: string;
-  avatarUrl?: string;
-  createdAt: string;
-};
+import type { User } from "shared/validation/modelSchema/UserSchema";
 
 type UserState = {
   user: User | null;
@@ -21,7 +13,7 @@ type UserActions = {
   setUser: (user: User) => void;
 };
 
-export const useUserStore = create<UserState & UserActions>((set, get) => ({
+export const useUserStore = create<UserState & UserActions>((set, _get) => ({
   user: null,
   isLoading: false,
   error: null,
@@ -30,7 +22,7 @@ export const useUserStore = create<UserState & UserActions>((set, get) => ({
     try {
       const response = await api.get("/user/me");
       set({ user: response, isLoading: false });
-    } catch (error) {
+    } catch (err) {
       set({ error: "取得に失敗しました", isLoading: false });
     }
   },
