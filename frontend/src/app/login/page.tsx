@@ -7,10 +7,13 @@ import Link from "next/link";
 import { useUserStore } from "@/lib/store/user";
 import { useAuthStore } from "@/lib/store/auth";
 import { useRedirectIfAuth } from "@/lib/hooks/useRedirectIfAuth";
+import { useForm } from "react-hook-form";
+import { LoginFormValues, loginSchema } from "@/validation/loginSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InputForm } from "@/components/form/InputForm/InputForm";
+import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
+
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuthStore();
@@ -21,33 +24,43 @@ export default function LoginPage() {
   // ログイン済みならリダイレクト
   useRedirectIfAuth();
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    mode: "onBlur", // blur時にバリデーション
+  });
 
+  const onSubmit = async (data: LoginFormValues) => {
     try {
       setLoading(true);
 
-      const loginUser = await login({ email, password });
+      const loginUser = await login(data);
       setUser(loginUser);
 
       setLoading(false);
       router.push("/profile");
     } catch (err: any) {
       console.error(err);
-      setError("ログインに失敗しました");
       setLoading(false);
     }
   };
 
-  const isDisable = email.trim() === "" || password.trim() === "";
+  const email = watch("email") || "";
+  const password = watch("password") || "";
+
+  const hasAnyError = Object.values(errors).some(isDefined);
+  const isDisable = !isNonEmptyString(email) || !isNonEmptyString(password) || hasAnyError;
 
   return (
     <>
       <div className="py-5">
         <h1 className="text-center text-[#A20065] text-2xl font-bold">レシピコミュニティ</h1>
         <p className="mb-4 text-center text-sm">あなたの料理の旅を続けましょう</p>
-        {error && <p className="text-red-500 mb-2">{error}</p>}
 
         <div className="shadow rounded-md p-4 bg-pink-100">
           <h2 className="text-center text-[#A20065] text-xl font-bold">ログイン</h2>
@@ -55,35 +68,30 @@ export default function LoginPage() {
             <span className="block">今すぐ参加して</span>素晴らしいレシピの世界を探索しましょう
           </p>
 
-          <form onSubmit={onSubmit} className="grid gap-4 mb-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-6" noValidate>
             <div>
-              <label htmlFor="email" className="block text-xs mb-1">
-                メールアドレス
-              </label>
-              <input
-                value={email}
-                id="email"
+              <InputForm
+                label="メールアドレス"
                 type="email"
-                placeholder="example@email.com"
-                className="bg-white rounded-md block w-full"
-                onChange={(e) => setEmail(e.target.value)}
+                value={watch("email") || ""}
+                {...register("email")}
+                onClear={() => setValue("email", "")}
+                placeholder="example@mail.com"
+                errorMessage={errors.email?.message}
+                required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-xs mb-1">
-                パスワード
-              </label>
-              <input
-                value={password}
-                id="password"
+              <InputForm
+                label="パスワード"
                 type="password"
+                value={watch("password") || ""}
+                {...register("password")}
+                onClear={() => setValue("password", "")}
                 placeholder="6文字以上のパスワード"
-                className="bg-white rounded-md block w-full"
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError(null);
-                }}
+                errorMessage={errors.password?.message}
+                required
               />
             </div>
 
@@ -98,7 +106,7 @@ export default function LoginPage() {
 
           <p className="text-center text-xs">
             アカウントをお持ちでない方は
-            <Link className="block cursor-pointer text-[#AE0076]" href="/signup">
+            <Link className="block cursor-pointer w-fit mx-auto text-[#AE0076]" href="/signup">
               新規登録
             </Link>
           </p>

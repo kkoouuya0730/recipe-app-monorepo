@@ -11,7 +11,7 @@ import { SettingIcon } from "./SettingIcon";
 import { UploadIcon } from "./UploadIcon";
 import { UserIcon } from "./UserIcon";
 import { UsersIcon } from "./UsersIcon";
-import { XIcon } from "./xIcon";
+import { XIcon } from "./XIcon";
 
 const ICONNAME_MAPPING = {
   email: EmailIcon,

@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/nextjs";
 import { InputForm, InputFormProps, inputFormTypePropertyValues } from "./InputForm";
-import { iconNameValue } from "@/components/ui/isons/UseIcon";
 import { useState } from "react";
 
 const meta = {
@@ -9,10 +8,6 @@ const meta = {
     type: {
       control: "select",
       options: inputFormTypePropertyValues,
-    },
-    iconName: {
-      control: "select",
-      options: iconNameValue,
     },
   },
 } satisfies Meta<typeof InputForm>;
@@ -25,7 +20,7 @@ const Example = (props: InputFormProps) => {
   return (
     <div>
       <p>Example</p>
-      <InputForm value={value} onChange={(e) => setValue(e.target.value)} iconName="email" label="名前" />
+      <InputForm value={value} onClear={() => setValue("")} label="名前" errorMessage="エラーです" required />
     </div>
   );
 };
@@ -34,8 +29,6 @@ export const FirstStory: Story = {
   args: {
     label: "テスト",
     value: undefined,
-    iconName: "email",
-    onChange: (e) => console.log(e.target.value),
   },
   decorators: () => {
     return (
