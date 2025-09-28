@@ -4,12 +4,11 @@ import { createRecipeInput } from "../validation/recipes.validation";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import z from "zod";
 import { InvalidInputError, NotFoundError } from "../errors/AppError";
-import { RecipeSchema } from "shared/validation/modelSchema/RecipeSchema";
 
 const router = Router();
 
-const idSchema = RecipeSchema.pick({
-  id: true,
+const idSchema = z.object({
+  id: z.coerce.number().int().min(1),
 });
 
 // レシピ作成

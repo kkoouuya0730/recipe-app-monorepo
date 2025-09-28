@@ -12,6 +12,7 @@ type Props = {
   type?: InputFormTypeProperty;
   // type?: InputHTMLAttributes<HTMLInputElement>["type"];
   value: InputHTMLAttributes<HTMLInputElement>["value"];
+  iconName?: IconName;
   register?: UseFormRegisterReturn;
   placeholder?: InputHTMLAttributes<HTMLInputElement>["placeholder"];
   required?: boolean;
@@ -21,21 +22,11 @@ type Props = {
 
 export type InputFormProps = Props;
 
-function getIconName(type: string) {
-  switch (type) {
-    case "email":
-      return "email";
-    case "password":
-      return "lock";
-    default:
-      return undefined;
-  }
-}
-
 export const InputForm = ({
   label,
   type = "text",
   value,
+  iconName,
   placeholder,
   required,
   errorMessage,
@@ -46,7 +37,6 @@ export const InputForm = ({
   const inputFormId = useId();
 
   const isShowClearButton = isNonEmptyString(value);
-  const iconName = getIconName(type) as IconName;
   return (
     <div>
       <p className="mb-2">

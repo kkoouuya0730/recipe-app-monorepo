@@ -74,6 +74,7 @@ export default function LoginPage() {
                 label="メールアドレス"
                 type="email"
                 value={watch("email") || ""}
+                iconName="email"
                 {...register("email")}
                 onClear={() => setValue("email", "")}
                 placeholder="example@mail.com"
@@ -87,6 +88,7 @@ export default function LoginPage() {
                 label="パスワード"
                 type="password"
                 value={watch("password") || ""}
+                iconName="lock"
                 {...register("password")}
                 onClear={() => setValue("password", "")}
                 placeholder="6文字以上のパスワード"
