@@ -4,12 +4,12 @@ import clsx from "clsx";
 import { api } from "../../lib/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { InputForm } from "@/components/form/InputForm/InputForm";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignUpFormValues, signUpSchema } from "@/validation/loginSchema";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import Link from "next/link";
+import { Input } from "@/components/Input/Input";
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
@@ -81,7 +81,7 @@ export default function SignUpPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-6" noValidate>
             <div>
-              <InputForm
+              <Input
                 label="お名前"
                 type="text"
                 value={watch("name") || ""}
@@ -95,7 +95,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <InputForm
+              <Input
                 label="メールアドレス"
                 type="email"
                 value={watch("email") || ""}
@@ -109,7 +109,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <InputForm
+              <Input
                 label="パスワード"
                 type="password"
                 value={watch("password") || ""}
@@ -122,7 +122,7 @@ export default function SignUpPage() {
               />
             </div>
             <div>
-              <InputForm
+              <Input
                 label="パスワード確認"
                 type="password"
                 value={watch("passwordConfirm") || ""}

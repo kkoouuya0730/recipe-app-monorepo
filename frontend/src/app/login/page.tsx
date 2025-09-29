@@ -10,8 +10,8 @@ import { useRedirectIfAuth } from "@/lib/hooks/useRedirectIfAuth";
 import { useForm } from "react-hook-form";
 import { LoginFormValues, loginSchema } from "@/validation/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputForm } from "@/components/form/InputForm/InputForm";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
+import { Input } from "@/components/Input/Input";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-6" noValidate>
             <div>
-              <InputForm
+              <Input
                 label="メールアドレス"
                 type="email"
                 value={watch("email") || ""}
@@ -84,7 +84,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <InputForm
+              <Input
                 label="パスワード"
                 type="password"
                 value={watch("password") || ""}

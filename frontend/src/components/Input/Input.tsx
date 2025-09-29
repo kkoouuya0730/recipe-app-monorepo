@@ -22,7 +22,7 @@ type Props = {
 
 export type InputFormProps = Props;
 
-export const InputForm = ({
+export const Input = ({
   label,
   type = "text",
   value,

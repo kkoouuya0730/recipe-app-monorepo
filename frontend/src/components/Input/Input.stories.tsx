@@ -1,16 +1,16 @@
 import { Meta, StoryObj } from "@storybook/nextjs";
-import { InputForm, InputFormProps, inputFormTypePropertyValues } from "./InputForm";
+import { Input, InputFormProps, inputFormTypePropertyValues } from "./Input";
 import { useState } from "react";
 
 const meta = {
-  component: InputForm,
+  component: Input,
   argTypes: {
     type: {
       control: "select",
       options: inputFormTypePropertyValues,
     },
   },
-} satisfies Meta<typeof InputForm>;
+} satisfies Meta<typeof Input>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -20,7 +20,7 @@ const Example = (props: InputFormProps) => {
   return (
     <div>
       <p>Example</p>
-      <InputForm value={value} onClear={() => setValue("")} label="名前" errorMessage="エラーです" required />
+      <Input value={value} onClear={() => setValue("")} label="名前" errorMessage="エラーです" required />
     </div>
   );
 };
