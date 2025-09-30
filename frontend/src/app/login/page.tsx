@@ -1,6 +1,5 @@
 "use client";
 
-import clsx from "clsx";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { LoginFormValues, loginSchema } from "@/validation/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import { Input } from "@/components/Input/Input";
+import { Button } from "@/components/Button/Button";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -57,63 +57,53 @@ export default function LoginPage() {
   const isDisable = !isNonEmptyString(email) || !isNonEmptyString(password) || hasAnyError;
 
   return (
-    <>
-      <div className="py-5">
-        <h1 className="text-center text-[#A20065] text-2xl font-bold">レシピコミュニティ</h1>
-        <p className="mb-4 text-center text-sm">あなたの料理の旅を続けましょう</p>
+    <div className="py-5">
+      <h1 className="text-center text-[#A20065] text-2xl font-bold">レシピコミュニティ</h1>
+      <p className="mb-4 text-center text-sm">あなたの料理の旅を続けましょう</p>
 
-        <div className="shadow rounded-md p-4 bg-pink-100">
-          <h2 className="text-center text-[#A20065] text-xl font-bold">ログイン</h2>
-          <p className="text-center text-xs mb-4">
-            <span className="block">今すぐ参加して</span>素晴らしいレシピの世界を探索しましょう
-          </p>
+      <div className="shadow rounded-md p-4 bg-pink-100">
+        <h2 className="text-center text-[#A20065] text-xl font-bold">ログイン</h2>
+        <p className="text-center text-xs mb-4">
+          <span className="block">今すぐ参加して</span>素晴らしいレシピの世界を探索しましょう
+        </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-6" noValidate>
-            <div>
-              <Input
-                label="メールアドレス"
-                type="email"
-                value={watch("email") || ""}
-                iconName="email"
-                {...register("email")}
-                onClear={() => setValue("email", "")}
-                placeholder="example@mail.com"
-                errorMessage={errors.email?.message}
-                required
-              />
-            </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 mb-6" noValidate>
+          <Input
+            label="メールアドレス"
+            type="email"
+            value={watch("email") || ""}
+            iconName="email"
+            {...register("email")}
+            onClear={() => setValue("email", "")}
+            placeholder="example@mail.com"
+            errorMessage={errors.email?.message}
+            required
+          />
 
-            <div>
-              <Input
-                label="パスワード"
-                type="password"
-                value={watch("password") || ""}
-                iconName="lock"
-                {...register("password")}
-                onClear={() => setValue("password", "")}
-                placeholder="6文字以上のパスワード"
-                errorMessage={errors.password?.message}
-                required
-              />
-            </div>
+          <Input
+            label="パスワード"
+            type="password"
+            value={watch("password") || ""}
+            iconName="lock"
+            {...register("password")}
+            onClear={() => setValue("password", "")}
+            placeholder="6文字以上のパスワード"
+            errorMessage={errors.password?.message}
+            required
+          />
 
-            <button
-              type="submit"
-              className={clsx(["bg-[#A20065] text-white rounded-lg py-2 font-bold", isDisable && "bg-gray-300"])}
-              disabled={loading || isDisable}
-            >
-              ログイン
-            </button>
-          </form>
+          <Button type="submit" disabled={loading || isDisable}>
+            ログイン
+          </Button>
+        </form>
 
-          <p className="text-center text-xs">
-            アカウントをお持ちでない方は
-            <Link className="block cursor-pointer w-fit mx-auto text-[#AE0076]" href="/signup">
-              新規登録
-            </Link>
-          </p>
-        </div>
+        <p className="text-center text-xs">
+          アカウントをお持ちでない方は
+          <Link className="block cursor-pointer w-fit mx-auto text-[#AE0076]" href="/signup">
+            新規登録
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,42 +1,55 @@
 import { Meta, StoryObj } from "@storybook/nextjs";
-import { Input, InputFormProps, inputFormTypePropertyValues } from "./Input";
+import { Input, inputFormTypePropertyValues } from "./Input";
 import { useState } from "react";
 
 const meta = {
+  title: "Components/Input",
   component: Input,
   argTypes: {
     type: {
       control: "select",
       options: inputFormTypePropertyValues,
     },
+    iconName: {
+      control: "select",
+      options: [undefined, "email", "lock", "x"],
+    },
+    errorMessage: { control: "text" },
+    required: { control: "boolean" },
+    value: { control: "text" },
+    onClear: { action: "clear" },
   },
 } satisfies Meta<typeof Input>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const Example = (props: InputFormProps) => {
-  const [value, setValue] = useState(props.value);
-  return (
-    <div>
-      <p>Example</p>
-      <Input value={value} onClear={() => setValue("")} label="名前" errorMessage="エラーです" required />
-    </div>
-  );
+export const Playground: Story = {
+  render: (args) => {
+    const [value, setValue] = useState(args.value ?? "");
+    return <Input {...args} value={value} onClear={() => setValue("")} />;
+  },
+  args: {
+    label: "お名前",
+    value: "",
+    required: false,
+  },
 };
 
-export const FirstStory: Story = {
+export const WithError: Story = {
   args: {
-    label: "テスト",
-    value: undefined,
+    label: "お名前",
+    value: "",
+    errorMessage: "入力値が不正です",
+    required: true,
   },
-  decorators: () => {
-    return (
-      <>
-        {/* <Story /> */}
+};
 
-        <Example label="test" value="" />
-      </>
-    );
+export const WithIcon: Story = {
+  args: {
+    label: "メール",
+    value: "",
+    iconName: "email",
+    type: "email",
   },
 };
