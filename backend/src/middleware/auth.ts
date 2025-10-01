@@ -59,6 +59,10 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     req.userId = payload.userId;
     next();
   } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      // アクセストークン期限切れ
+      return res.status(401).json({ error: "Access token expired" });
+    }
     next(error);
   }
 };
