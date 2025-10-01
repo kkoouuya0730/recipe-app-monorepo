@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { useRouter } from "next/navigation";
+import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
 
 export default function NewRecipePage() {
   const [title, setTitle] = useState("");
@@ -14,7 +15,7 @@ export default function NewRecipePage() {
   const [tags, setTags] = useState<string[]>([]);
   const [tagName, setTagName] = useState("");
   const [tagNameError, setTagNameError] = useState<string | null>(null);
-  const [_error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleAddTagButton = () => {
@@ -34,7 +35,7 @@ export default function NewRecipePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setErrorMessage(null);
 
     try {
       const res = await fetch("/api/recipes", {
@@ -58,16 +59,14 @@ export default function NewRecipePage() {
       const recipe = await res.json();
       router.push(`/recipes/${recipe.id}`);
     } catch (error: any) {
-      setError(error.message);
+      setErrorMessage("レシピ作成に失敗しました");
     }
   };
 
   return (
     <div className="py-5">
-      <div>
-        <h1 className="text-center text-[#A20065] text-2xl font-bold mb-1">新しいレシピを投稿</h1>
-        <p className="mb-4 text-center text-sm">あなたの素敵なレシピをコミュニティと共有しましょう</p>
-      </div>
+      <h1 className="text-center text-[#A20065] text-2xl font-bold mb-1">新しいレシピを投稿</h1>
+      <p className="mb-4 text-center text-sm">あなたの素敵なレシピをコミュニティと共有しましょう</p>
 
       <form className="grid gap-6" onSubmit={handleSubmit}>
         <div className="rounded-md shadow bg-white p-2">
@@ -253,6 +252,10 @@ export default function NewRecipePage() {
           レシピを投稿する
         </button>
       </form>
+
+      <ErrorDialog message={errorMessage} onClick={() => setErrorMessage(null)}>
+        閉じる
+      </ErrorDialog>
     </div>
   );
 }

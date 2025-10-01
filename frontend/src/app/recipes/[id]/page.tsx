@@ -6,6 +6,8 @@ import { api } from "@/lib/api";
 import Image from "next/image";
 import type { Recipe } from "shared/validation/modelSchema/RecipeSchema";
 import type { User } from "shared/validation/modelSchema/UserSchema";
+import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
+import { useRouter } from "next/router";
 
 type SectionContainerProps = {
   children: ReactNode;
@@ -21,32 +23,28 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loadingRecipe, setLoadingRecipe] = useState(false);
-  const [recipeError, setRecipeError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchRecipeDetail = async () => {
       setLoadingRecipe(true);
       try {
         const res = await api.get(`/recipes/${recipeId}`);
-
         setRecipe(res);
         setUser(res.user);
       } catch (error) {
-        setRecipeError("レシピの取得に失敗しました");
+        setErrorMessage("レシピの取得に失敗しました");
       } finally {
         setLoadingRecipe(false);
       }
     };
-
     fetchRecipeDetail();
   }, [recipeId]);
 
   if (loadingRecipe) {
     return <p>レシピ情報取得中</p>;
-  }
-
-  if (recipeError) {
-    return <p>{recipeError}</p>;
   }
 
   return (
@@ -104,6 +102,10 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
           </ul>
         </div>
       </SectionContainer>
+
+      <ErrorDialog message={errorMessage} onClick={() => router.push("/recipes")}>
+        レシピ一覧に戻る
+      </ErrorDialog>
     </div>
   );
 }

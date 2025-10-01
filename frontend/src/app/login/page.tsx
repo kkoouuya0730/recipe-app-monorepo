@@ -12,9 +12,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import { Input } from "@/components/Input/Input";
 import { Button } from "@/components/Button/Button";
+import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { login } = useAuthStore();
   const { setUser } = useUserStore();
@@ -45,7 +47,9 @@ export default function LoginPage() {
       setLoading(false);
       router.push("/profile");
     } catch (err: any) {
-      console.error(err);
+      setErrorMessage("ログインに失敗しました");
+      setLoading(false);
+    } finally {
       setLoading(false);
     }
   };
@@ -61,7 +65,7 @@ export default function LoginPage() {
       <h1 className="text-center text-[#A20065] text-2xl font-bold">レシピコミュニティ</h1>
       <p className="mb-4 text-center text-sm">あなたの料理の旅を続けましょう</p>
 
-      <div className="shadow rounded-md p-4 bg-pink-100">
+      <section className="shadow rounded-md p-4 bg-pink-100">
         <h2 className="text-center text-[#A20065] text-xl font-bold">ログイン</h2>
         <p className="text-center text-xs mb-4">
           <span className="block">今すぐ参加して</span>素晴らしいレシピの世界を探索しましょう
@@ -103,7 +107,11 @@ export default function LoginPage() {
             新規登録
           </Link>
         </p>
-      </div>
+      </section>
+
+      <ErrorDialog message={errorMessage} onClick={() => setErrorMessage(null)}>
+        閉じる
+      </ErrorDialog>
     </div>
   );
 }

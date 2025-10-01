@@ -10,8 +10,10 @@ import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import Link from "next/link";
 import { Input } from "@/components/Input/Input";
 import { Button } from "@/components/Button/Button";
+import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const router = useRouter();
 
@@ -41,7 +43,7 @@ export default function SignUpPage() {
       setLoading(false);
       router.push("/");
     } catch (err: any) {
-      console.error(err);
+      setErrorMessage("会員登録に失敗しました");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -72,7 +74,7 @@ export default function SignUpPage() {
         新しい料理を発見しましょう
       </p>
 
-      <div className="shadow rounded-md p-4 bg-pink-100">
+      <section className="shadow rounded-md p-4 bg-pink-100">
         <h2 className="text-center text-[#A20065] text-xl font-bold">アカウント作成</h2>
         <p className="text-center text-xs mb-4">
           <span className="block">今すぐ参加して</span>素晴らしいレシピの世界を探索しましょう
@@ -137,7 +139,11 @@ export default function SignUpPage() {
             ログイン
           </Link>
         </p>
-      </div>
+      </section>
+
+      <ErrorDialog message={errorMessage} onClick={() => setErrorMessage(null)}>
+        閉じる
+      </ErrorDialog>
     </div>
   );
 }
