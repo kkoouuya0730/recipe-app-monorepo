@@ -7,7 +7,7 @@ import Image from "next/image";
 import type { Recipe } from "shared/validation/modelSchema/RecipeSchema";
 import type { User } from "shared/validation/modelSchema/UserSchema";
 import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 type SectionContainerProps = {
   children: ReactNode;

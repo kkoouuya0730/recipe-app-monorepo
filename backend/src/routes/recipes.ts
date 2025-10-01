@@ -47,7 +47,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res, next) => {
 router.get("/", async (_req, res, next) => {
   try {
     const recipe = await prisma.recipe.findMany({
-      include: { tags: true, user: { select: { id: true, name: true } } },
+      include: { tags: true, user: { select: { id: true, name: true } }, likes: true, comments: true },
       orderBy: { createdAt: "desc" },
     });
 
@@ -57,10 +57,15 @@ router.get("/", async (_req, res, next) => {
   }
 });
 
+// TODO レシピ検索結果
+
 // ユーザーのレシピ一覧
 router.get("/my-recipes", authMiddleware, async (req: AuthRequest, res, next) => {
   try {
-    const recipe = await prisma.recipe.findMany({ where: { userId: req.userId! }, include: { comments: true } });
+    const recipe = await prisma.recipe.findMany({
+      where: { userId: req.userId! },
+      include: { comments: true, likes: true },
+    });
 
     res.json(recipe);
   } catch (err) {
@@ -78,7 +83,10 @@ router.get("/:id", async (req, res, next) => {
 
     const { id } = recipeIdResult.data;
 
-    const recipe = await prisma.recipe.findUnique({ where: { id }, include: { user: true, comments: true } });
+    const recipe = await prisma.recipe.findUnique({
+      where: { id },
+      include: { user: true, comments: true, likes: true },
+    });
     if (!recipe) {
       throw new NotFoundError("Recipe not found");
     }
