@@ -1,4 +1,4 @@
-import UseIcon, { IconName } from "@/components/ui/isons/UseIcon";
+import UseIcon, { IconName } from "@/components/ui/icons/UseIcon";
 import { isNonEmptyString } from "@/util/isDefinedValue";
 import clsx from "clsx";
 import { InputHTMLAttributes, useId } from "react";
