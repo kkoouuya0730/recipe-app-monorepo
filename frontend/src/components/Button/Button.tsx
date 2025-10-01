@@ -7,7 +7,7 @@ type Props = {
   type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
   color?: ButtonColorProperty;
   onClick?: ButtonHTMLAttributes<HTMLButtonElement>["onClick"];
-  disabled: boolean;
+  disabled?: boolean;
   children: ReactNode;
 };
 

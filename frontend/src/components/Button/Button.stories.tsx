@@ -20,7 +20,6 @@ export const Primary: Story = {
   args: {
     children: "Primary Button",
     color: "primary",
-    disabled: false,
   },
 };
 
@@ -28,7 +27,6 @@ export const Secondary: Story = {
   args: {
     children: "Secondary Button",
     color: "secondary",
-    disabled: false,
   },
 };
 
@@ -36,7 +34,6 @@ export const Tertiary: Story = {
   args: {
     children: "Tertiary Button",
     color: "tertiary",
-    disabled: false,
   },
 };
 
@@ -44,7 +41,6 @@ export const Danger: Story = {
   args: {
     children: "Danger Button",
     color: "danger",
-    disabled: false,
   },
 };
 
