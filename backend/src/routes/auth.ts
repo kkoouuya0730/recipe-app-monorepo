@@ -25,7 +25,7 @@ router.post("/signup", async (req, res, next) => {
   try {
     const result = registerUserInput.safeParse(req.body);
     if (!result.success) {
-      throw result.error;
+      return next(result.error);
     }
 
     const { name, email, password } = result.data;
@@ -44,7 +44,7 @@ router.post("/login", async (req, res, next) => {
   try {
     const result = loginUserInput.safeParse(req.body);
     if (!result.success) {
-      throw result.error;
+      return next(result.error);
     }
 
     const { email, password } = result.data;

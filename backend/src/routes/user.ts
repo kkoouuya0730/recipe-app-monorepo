@@ -42,7 +42,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const result = schema.safeParse({ id: req.params.id });
     if (!result.success) {
-      throw result.error;
+      return next(result.error);
     }
 
     const { id } = result.data;

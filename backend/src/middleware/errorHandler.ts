@@ -5,14 +5,14 @@ import { InvalidInputError, NotFoundError } from "../errors/AppError";
 
 export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error(err.constructor.name);
-  axios
-    .post(process.env.SLACK_WEBHOOK_URL!, {
-      text: `❌ Error: ${err.message}\nPath: ${req.path}\nStack: ${err.stack}`,
-    })
-    .catch(() => {});
 
   if (err instanceof ZodError) {
     console.error(err);
+    axios
+      .post(process.env.SLACK_WEBHOOK_URL!, {
+        text: `❌ ZodError: Path: ${req.path}\nStack: ${err.stack}`,
+      })
+      .catch(() => {});
     return res.status(400).json({
       error: {
         code: 400,
@@ -27,6 +27,11 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
 
   if (err instanceof InvalidInputError) {
     console.error(err);
+    axios
+      .post(process.env.SLACK_WEBHOOK_URL!, {
+        text: `❌ InvalidInputError(${err.statusCode}): ${err.message}\nPath: ${req.path}\nStack: ${err.stack}`,
+      })
+      .catch(() => {});
     return res.status(err.statusCode).json({
       error: {
         code: err.statusCode,
@@ -37,6 +42,11 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
 
   if (err instanceof NotFoundError) {
     console.error(err);
+    axios
+      .post(process.env.SLACK_WEBHOOK_URL!, {
+        text: `❌ NotFoundError(${err.statusCode}): ${err.message}\nPath: ${req.path}\nStack: ${err.stack}`,
+      })
+      .catch(() => {});
     return res.status(err.statusCode).json({
       error: {
         code: err.statusCode,
@@ -44,6 +54,12 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
       },
     });
   }
+
+  axios
+    .post(process.env.SLACK_WEBHOOK_URL!, {
+      text: `❌ Error: ${err.message}\nPath: ${req.path}\nStack: ${err.stack}`,
+    })
+    .catch(() => {});
 
   const message = err.message || "Internal Server Error";
 

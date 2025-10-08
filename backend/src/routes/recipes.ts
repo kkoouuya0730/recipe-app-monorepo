@@ -16,7 +16,7 @@ router.post("/", authMiddleware, async (req: AuthRequest, res, next) => {
   try {
     const recipeContentResult = createRecipeInput.safeParse(req.body);
     if (!recipeContentResult.success) {
-      throw new InvalidInputError("Invalid input");
+      return next(recipeContentResult.error);
     }
 
     const { title, description, tags = [] } = recipeContentResult.data;
@@ -78,7 +78,7 @@ router.get("/:id", async (req, res, next) => {
   try {
     const recipeIdResult = idSchema.safeParse({ id: req.params.id });
     if (!recipeIdResult.success) {
-      throw recipeIdResult.error;
+      return next(recipeIdResult.error);
     }
 
     const { id } = recipeIdResult.data;
@@ -102,7 +102,7 @@ router.delete("/:id", authMiddleware, async (req: AuthRequest, res, next) => {
   try {
     const recipeIdResult = idSchema.safeParse({ id: req.params.id });
     if (!recipeIdResult.success) {
-      throw recipeIdResult.error;
+      return next(recipeIdResult.error);
     }
 
     const { id } = recipeIdResult.data;
@@ -132,13 +132,13 @@ router.post("/:id/comment", authMiddleware, async (req: AuthRequest, res, next) 
   try {
     const recipeIdResult = idSchema.safeParse({ id: req.params.id });
     if (!recipeIdResult.success) {
-      throw recipeIdResult.error;
+      return next(recipeIdResult.error);
     }
     const { id: recipeId } = recipeIdResult.data;
     const commentResult = commentSchema.safeParse(req.body);
 
     if (!commentResult.success) {
-      throw commentResult.error;
+      return next(commentResult.error);
     }
 
     const { content } = commentResult.data;

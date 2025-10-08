@@ -28,9 +28,13 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
       // accessToken があれば検証
       const decoded = jwt.verify(accessToken, JWT_SECRET);
       const parseResult = payloadSchema.safeParse(decoded);
-      if (!parseResult.success) throw new Error("Invalid access token");
+      if (!parseResult.success) {
+        return next(parseResult.error);
+      }
       const idCheck = idSchema.safeParse({ userId: parseResult.data.userId });
-      if (!idCheck.success) throw new Error("Invalid access token payload");
+      if (!idCheck.success) {
+        return next(idCheck.error);
+      }
 
       req.userId = idCheck.data.userId;
       return next();
@@ -46,8 +50,9 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
 
     const payload = jwt.verify(refreshToken, REFRESH_SECRET) as { userId: number };
     const idCheck = idSchema.safeParse({ userId: payload.userId });
-    if (!idCheck.success) throw new Error("Invalid refresh token payload");
-
+    if (!idCheck.success) {
+      return next(idCheck.error);
+    }
     // 新しい accessToken 発行
     const newAccessToken = jwt.sign({ userId: payload.userId }, JWT_SECRET, { expiresIn: "15m" });
     res.cookie("accessToken", newAccessToken, {
