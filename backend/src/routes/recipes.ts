@@ -3,29 +3,63 @@ import { prisma } from "../prismaClient";
 import { createRecipeInput } from "../validation/recipes.validation";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import z from "zod";
-import { InvalidInputError, NotFoundError } from "../errors/AppError";
+import { NotFoundError } from "../errors/AppError";
+import multer from "multer";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const router = Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
 const idSchema = z.object({
   id: z.coerce.number().int().min(1),
 });
 
+const s3 = new S3Client({ region: "ap-northeast-1" });
+const BUCKET_NAME = process.env.AWS_S3_BUCKET!;
+
 // レシピ作成
-router.post("/", authMiddleware, async (req: AuthRequest, res, next) => {
+router.post("/", authMiddleware, upload.single("image"), async (req: AuthRequest, res, next) => {
   try {
-    const recipeContentResult = createRecipeInput.safeParse(req.body);
+    // formDataを型変換
+    const raw = req.body;
+    const parsedTags = raw.tags.map((tag: string) => {
+      return {
+        name: tag,
+      };
+    });
+
+    const parsedFormData = {
+      title: raw.title,
+      description: raw.description,
+      tags: parsedTags,
+    };
+    const recipeContentResult = createRecipeInput.safeParse(parsedFormData);
     if (!recipeContentResult.success) {
       return next(recipeContentResult.error);
     }
 
-    const { title, description, tags = [] } = recipeContentResult.data;
+    const { title, description, tags } = recipeContentResult.data;
     const uniqueTags = [...new Set(tags)];
+
+    let imageUrl: string | null = null;
+    if (req.file) {
+      const file = req.file;
+      const key = `recipes/${Date.now()}_${file.originalname}`;
+      const command = new PutObjectCommand({
+        Bucket: BUCKET_NAME,
+        Key: key,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      });
+      await s3.send(command);
+      imageUrl = `https://${BUCKET_NAME}.s3.amazonaws.com/${key}`;
+    }
 
     const recipe = await prisma.recipe.create({
       data: {
         title,
         description,
+        imageUrl,
         userId: req.userId!,
         tags: {
           connectOrCreate: uniqueTags.map((tag) => ({

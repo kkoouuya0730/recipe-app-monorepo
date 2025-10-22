@@ -16,7 +16,15 @@ export default function NewRecipePage() {
   const [tagName, setTagName] = useState("");
   const [tagNameError, setTagNameError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const router = useRouter();
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImageFile(e.target.files[0]);
+    }
+  };
 
   const handleAddTagButton = () => {
     setTagNameError(null);
@@ -37,18 +45,19 @@ export default function NewRecipePage() {
     e.preventDefault();
     setErrorMessage(null);
 
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    tags.forEach((tag, i) => formData.append(`tags[${i}]`, tag));
+    if (imageFile) {
+      formData.append("image", imageFile);
+    }
+
     try {
-      const res = await fetch("/api/recipes", {
+      const res = await fetch("http://localhost:4000/api/recipes", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         credentials: "include",
-        body: JSON.stringify({
-          title,
-          description,
-          tags: tags.map((t) => t.trim()).filter(Boolean),
-        }),
+        body: formData,
       });
 
       if (!res.ok) {
@@ -58,6 +67,7 @@ export default function NewRecipePage() {
 
       const recipe = await res.json();
       router.push(`/recipes/${recipe.id}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     } catch (error: any) {
       setErrorMessage("レシピ作成に失敗しました");
     }
@@ -75,7 +85,7 @@ export default function NewRecipePage() {
 
           <div className="border border-dashed p-1 rounded-md text-center">
             <p className="text-xs">画像をドラッグ&ドロップまたはクリックして選択</p>
-            <button>画像を選択</button>
+            <input type="file" name="recipe-image" onChange={(e) => handleImageChange(e)} />
           </div>
         </div>
 
