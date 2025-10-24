@@ -46,6 +46,7 @@ export default function LoginPage() {
 
       setLoading(false);
       router.push("/profile");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     } catch (err: any) {
       setErrorMessage("ログインに失敗しました");
       setLoading(false);

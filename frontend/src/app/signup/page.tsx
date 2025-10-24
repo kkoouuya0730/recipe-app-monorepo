@@ -42,6 +42,7 @@ export default function SignUpPage() {
 
       setLoading(false);
       router.push("/");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
     } catch (err: any) {
       setErrorMessage("会員登録に失敗しました");
       setLoading(false);

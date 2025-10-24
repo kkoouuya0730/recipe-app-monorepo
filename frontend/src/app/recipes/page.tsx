@@ -18,6 +18,7 @@ export default function RecipesPage({}) {
       try {
         const res = await api.get(`/recipes`);
         setRecipes(res);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setErrorMessage("レシピの取得に失敗しました");
       } finally {

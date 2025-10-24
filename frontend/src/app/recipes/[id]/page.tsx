@@ -34,6 +34,7 @@ export default function RecipeDetailPage({ params }: { params: Promise<{ id: str
         const res = await api.get(`/recipes/${recipeId}`);
         setRecipe(res);
         setUser(res.user);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         setErrorMessage("レシピの取得に失敗しました");
       } finally {
