@@ -8,7 +8,7 @@ export const useRequireAuth = () => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   return user;
 };

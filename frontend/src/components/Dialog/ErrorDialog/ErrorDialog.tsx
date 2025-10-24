@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/Button/Button";
+import { Button } from "@/components/Button/Button/Button";
 import { isDefined } from "@/util/isDefinedValue";
 import React, { ReactNode, useEffect, useRef } from "react";
 

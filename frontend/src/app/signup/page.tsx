@@ -9,7 +9,7 @@ import { SignUpFormValues, signUpSchema } from "@/validation/loginSchema";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import Link from "next/link";
 import { Input } from "@/components/Input/Input";
-import { Button } from "@/components/Button/Button";
+import { Button } from "@/components/Button/Button/Button";
 import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);

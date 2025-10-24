@@ -13,7 +13,8 @@ type UserActions = {
   setUser: (user: User) => void;
 };
 
-export const useUserStore = create<UserState & UserActions>((set, _get) => ({
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const useUserStore = create<UserState & UserActions>((set, get) => ({
   user: null,
   isLoading: false,
   error: null,
@@ -22,6 +23,7 @@ export const useUserStore = create<UserState & UserActions>((set, _get) => ({
     try {
       const response = await api.get("/user/me");
       set({ user: response, isLoading: false });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       set({ error: "取得に失敗しました", isLoading: false });
     }

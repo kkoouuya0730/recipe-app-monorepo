@@ -11,7 +11,7 @@ import { LoginFormValues, loginSchema } from "@/validation/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { isDefined, isNonEmptyString } from "@/util/isDefinedValue";
 import { Input } from "@/components/Input/Input";
-import { Button } from "@/components/Button/Button";
+import { Button } from "@/components/Button/Button/Button";
 import { ErrorDialog } from "@/components/Dialog/ErrorDialog/ErrorDialog";
 
 export default function LoginPage() {
