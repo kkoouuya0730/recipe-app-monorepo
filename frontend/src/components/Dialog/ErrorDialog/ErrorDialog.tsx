@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/Button/Button";
 import { isDefined } from "@/util/isDefinedValue";
 import React, { ReactNode, useEffect, useRef } from "react";
